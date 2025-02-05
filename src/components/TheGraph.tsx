@@ -7,10 +7,10 @@ function TheGraph() {
     <section className="w-full h-full relative">
       {graphNode.map((gn, index) => (
         <GraphNode
-          key={`node-${index}`}
-          draggable={{
-            defaultPosition: { x: 0, y: 0 },
-          }}
+          key={`node-${gn.id}`}
+          // draggable={{
+          //   defaultPosition: { x: 0, y: 0 },
+          // }}
           graphNode={gn}
         >
           {gn.name ?? '<이름없음>'}

@@ -4,6 +4,19 @@ import Button from './Button';
 import FocusedNode from './FocusedNode';
 import { useGraphNode } from './GraphNodeContext';
 
+const getFormattedTimestamp = (): string => {
+  const now = new Date();
+
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+  const day = String(now.getDate()).padStart(2, '0');
+  const hour = String(now.getHours()).padStart(2, '0');
+  const minute = String(now.getMinutes()).padStart(2, '0');
+  const second = String(now.getSeconds()).padStart(2, '0');
+
+  return `${year}-${month}-${day}_${hour}-${minute}-${second}`;
+};
+
 function ControlPanel() {
   const { graphNode, addGraphNode, clearGraphNodes } = useGraphNode();
 
@@ -24,7 +37,7 @@ function ControlPanel() {
   };
 
   return (
-    <div className="bg-amber-50 w-1/4 max-w-[300px] max-h-[100%] overflow-y-auto text-sm gap-5 flex flex-col">
+    <div className="bg-amber-50 w-1/5 max-w-[260px] max-h-[100%] overflow-y-auto text-sm gap-5 flex flex-col">
       <div className="">
         선택된 노드
         <FocusedNode></FocusedNode>
@@ -82,7 +95,7 @@ function ControlPanel() {
               const a = document.createElement('a');
 
               a.href = url;
-              a.download = 'graphNode.json';
+              a.download = `graphNode_${getFormattedTimestamp()}.json`;
               a.click();
               URL.revokeObjectURL(url);
             }}

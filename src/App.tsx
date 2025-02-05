@@ -1,4 +1,4 @@
-import { get } from 'idb-keyval';
+import { get, set } from 'idb-keyval';
 import { useEffect } from 'react';
 import Modal from 'react-modal';
 import { GraphNode, NODE_LOCAL_SAVE_KEY } from './class/types';
@@ -21,7 +21,7 @@ function GraphLoader() {
 }
 
 function Container({ children }: { children: React.ReactNode }) {
-  const { clearGraphNodes } = useGraphNode();
+  const { graphNode, clearGraphNodes } = useGraphNode();
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -43,6 +43,22 @@ function Container({ children }: { children: React.ReactNode }) {
       console.error('Please upload a valid JSON file');
     }
   };
+
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.ctrlKey && e.key === 's') {
+      e.preventDefault();
+      set(NODE_LOCAL_SAVE_KEY, graphNode).then(() => {
+        console.log('saved', graphNode);
+      });
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [graphNode]);
 
   return (
     <div
