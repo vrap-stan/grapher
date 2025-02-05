@@ -73,6 +73,22 @@ function ControlPanel() {
             노드 전체삭제
           </Button>
           <Button onClick={saveNodes}>저장</Button>
+          <Button
+            onClick={() => {
+              // save as json : graphNode
+              const json = JSON.stringify(graphNode);
+              const blob = new Blob([json], { type: 'application/json' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+
+              a.href = url;
+              a.download = 'graphNode.json';
+              a.click();
+              URL.revokeObjectURL(url);
+            }}
+          >
+            파일로 저장
+          </Button>
           <Button onClick={loadNodes}>불러오기</Button>
           <Button
             onClick={() => {

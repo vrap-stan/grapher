@@ -20,16 +20,51 @@ function GraphLoader() {
   return null;
 }
 
+function Container({ children }: { children: React.ReactNode }) {
+  const { clearGraphNodes } = useGraphNode();
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const file = event.dataTransfer.files[0];
+    if (file && file.type === 'application/json') {
+      const reader = new FileReader();
+      reader.onload = e => {
+        try {
+          const result = JSON.parse(e.target?.result as string);
+          if (Array.isArray(result)) {
+            clearGraphNodes(result);
+          }
+        } catch (error) {
+          console.error('Invalid JSON file', error);
+        }
+      };
+      reader.readAsText(file);
+    } else {
+      console.error('Please upload a valid JSON file');
+    }
+  };
+
+  return (
+    <div
+      className="h-dvh w-dvw relative flex"
+      onDrop={handleDrop}
+      onDragOver={e => e.preventDefault()}
+    >
+      {children}
+    </div>
+  );
+}
+
 function App() {
   return (
     <GraphNodeProvider>
-      <div className="h-dvh w-dvw relative flex">
+      <Container>
         <div className="flex-1 relative">
           <TheGraph></TheGraph>
         </div>
         <ControlPanel></ControlPanel>
         <GraphLoader></GraphLoader>
-      </div>
+      </Container>
     </GraphNodeProvider>
   );
 }
