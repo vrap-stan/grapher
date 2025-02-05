@@ -1,7 +1,5 @@
 import { GraphNode, GraphNodeType } from '@/class/types';
 import { MouseEvent, useEffect, useRef, useState } from 'react';
-import Modal from 'react-modal';
-import Button from './Button';
 import { useGraphNode } from './GraphNodeContext';
 
 export interface GraphNodeProps {
@@ -96,16 +94,16 @@ function GraphNodeComponent(props: GraphNodeProps) {
     }
   }, [x, y]);
 
-  const [editingName, setEditingName] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
-  const handleNameChangeSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleChangeSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     updateGraphNode({
       id,
       name: namechange,
       type: typechange,
     });
-    setEditingName(false);
+    setIsEditing(false);
   };
   return (
     <>
@@ -129,7 +127,26 @@ function GraphNodeComponent(props: GraphNodeProps) {
         {...rest}
       >
         <div className="text-xs mb-0.5 border-b-1 border-[#fff4] flex justify-between">
-          <div>{nameMap[type]}</div>
+          {isEditing ? (
+            <select
+              onChange={e => {
+                setTypeChange(e.target.value as GraphNodeType);
+              }}
+              value={typechange}
+            >
+              {Object.entries(nameMap).map(([key, value]) => (
+                <option
+                  className="text-black"
+                  key={`edit-option-${key}`}
+                  value={key}
+                >
+                  {value}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <div>{nameMap[type]}</div>
+          )}
           <div className="ml-3">
             <button
               className="text-xs text-[#fffd] hover:bg-amber-50 hover:cursor-pointer hover:text-black"
@@ -137,9 +154,9 @@ function GraphNodeComponent(props: GraphNodeProps) {
                 e.stopPropagation();
                 // setModalOpen(true);
                 // console.log('Here');
-                setEditingName(true);
+                setIsEditing(true);
               }}
-              disabled={editingName}
+              disabled={isEditing}
             >
               수정
             </button>
@@ -154,8 +171,8 @@ function GraphNodeComponent(props: GraphNodeProps) {
             </button>
           </div>
         </div>
-        {editingName ? (
-          <form onSubmit={handleNameChangeSubmit}>
+        {isEditing ? (
+          <form onSubmit={handleChangeSubmit}>
             <input
               className="bg-white w-30 text-xs text-black p-0.5 rounded-md"
               type="text"
@@ -169,7 +186,7 @@ function GraphNodeComponent(props: GraphNodeProps) {
               type="button"
               className="text-xs hover:cursor-pointer ml-1 bg-amber-600 rounded-md p-0.5"
               onClick={() => {
-                setEditingName(false);
+                setIsEditing(false);
               }}
             >
               취소
@@ -185,61 +202,6 @@ function GraphNodeComponent(props: GraphNodeProps) {
           <div className="text-sm">{Boolean(name) ? name : '<이름없음>'}</div>
         )}
       </div>
-      <Modal
-        className="bg-white rounded-2xl border-1 border-[#0002] w-1/2 h-1/2 translate-x-1/2 translate-y-1/2"
-        isOpen={modalOpen}
-        onRequestClose={closeModal}
-      >
-        <div className="p-4 w-full h-full flex flex-col">
-          <div className="flex-1 min-h-0">
-            <label>타입 변경: </label>
-            <select
-              onChange={e => {
-                setTypeChange(e.target.value as GraphNodeType);
-              }}
-              value={typechange}
-            >
-              {Object.entries(nameMap).map(([key, value]) => (
-                <option key={key} value={key}>
-                  {value}
-                </option>
-              ))}
-            </select>
-            <br></br>
-            <label>이름 변경: </label>
-            <input
-              type="text"
-              placeholder="이름"
-              value={namechange}
-              onChange={e => {
-                setNameChange(e.target.value);
-              }}
-            ></input>
-          </div>
-          <div className="h-8 flex justify-end">
-            <Button
-              onClick={() => {
-                closeModal();
-              }}
-            >
-              취소
-            </Button>
-            <Button
-              onClick={() => {
-                updateGraphNode({
-                  id,
-                  name: namechange,
-                  type: typechange,
-                });
-                closeModal();
-              }}
-              type="submit"
-            >
-              확인
-            </Button>
-          </div>
-        </div>
-      </Modal>
     </>
   );
 }
