@@ -1,16 +1,21 @@
+import Button from './Button';
+import { useGraphNode } from './GraphNodeContext';
+
 function ControlPanel() {
+  const { addGraphNode } = useGraphNode();
+
   return (
-    <div
-      style={{
-        backgroundColor: '#f0f0f0',
-        minWidth: 0,
-        width: `25%`,
-        maxWidth: '300px',
-        maxHeight: '100%',
-        overflowY: 'auto',
-      }}
-    >
+    <div className="bg-amber-50 w-1/4 max-w-[300px] max-h-[100%] overflow-y-auto">
       Content
+      <div className="flex flex-col w-full p-2">
+        <Button
+          onClick={() => {
+            addGraphNode('mesh');
+          }}
+        >
+          메시 생성
+        </Button>
+      </div>
     </div>
   );
 }

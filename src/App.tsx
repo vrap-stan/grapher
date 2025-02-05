@@ -1,38 +1,17 @@
 import ControlPanel from './components/ControlPanel';
-import GraphNode from './components/GraphNode';
+import { GraphNodeProvider } from './components/GraphNodeContext';
+import TheGraph from './components/TheGraph';
 
 function App() {
-  const vals = ['dd', 'ff', 'gg'];
-
   return (
-    <div
-      style={{
-        width: '100dvw',
-        height: '100dvh',
-        position: 'relative',
-        display: 'flex',
-      }}
-    >
-      <div
-        style={{
-          flex: 1,
-          position: 'relative',
-        }}
-      >
-        {vals.map((val, index) => (
-          <GraphNode
-            key={`node-${index}`}
-            draggable={{
-              defaultPosition: { x: 0, y: 0 },
-            }}
-            type="rule"
-          >
-            {val}
-          </GraphNode>
-        ))}
+    <GraphNodeProvider>
+      <div className="h-dvh w-dvw relative flex">
+        <div className="flex-1 relative">
+          <TheGraph></TheGraph>
+        </div>
+        <ControlPanel></ControlPanel>
       </div>
-      <ControlPanel></ControlPanel>
-    </div>
+    </GraphNodeProvider>
   );
 }
 
