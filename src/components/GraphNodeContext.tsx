@@ -13,6 +13,13 @@ export interface GraphNodeContextType {
   removeGraphNode(nodes: { id?: string }[]): void;
   removeGraphNode(id: string): void;
   removeGraphNode(ids: string[]): void;
+
+  updateGraphNode(node: { id: string } & Partial<GraphNode>): void;
+
+  updateGraphNode(from: { id: string }, to: Partial<GraphNode>): void;
+  updateGraphNode(id: string, to: Partial<GraphNode>): void;
+
+  clearGraphNodes(initValues?: GraphNode[]): void;
 }
 
 export const GraphNodeContext = createContext<GraphNodeContextType | undefined>(
@@ -25,6 +32,8 @@ export const GraphNodeProvider = ({
   children?: React.ReactNode;
 }) => {
   const [graphNode, setGraphNodes] = useState<GraphNode[]>([]);
+
+  // console.log(graphNode.map(n => n.name));
 
   const addGraphNode: GraphNodeContextType['addGraphNode'] = (
     node: GraphNode | GraphNodeType | GraphNode[],
@@ -72,9 +81,41 @@ export const GraphNodeProvider = ({
     }
   };
 
+  const updateGraphNode: GraphNodeContextType['updateGraphNode'] = (
+    from: string | { id: string },
+    to?,
+  ) => {
+    if (typeof from === 'string') {
+      setGraphNodes(prev =>
+        prev.map(n =>
+          n.id === from ? { ...n, ...(to as Partial<GraphNode>) } : n,
+        ),
+      );
+    } else if (to === undefined) {
+      setGraphNodes(prev =>
+        prev.map(n => (n.id === from.id ? { ...n, ...from } : n)),
+      );
+    } else {
+      setGraphNodes(prev =>
+        prev.map(n => (n.id === from.id ? { ...n, ...to } : n)),
+      );
+    }
+  };
+
+  const clearGraphNodes = (initValue: GraphNode[] = []) => {
+    setGraphNodes(initValue);
+  };
+
   return (
     <GraphNodeContext.Provider
-      value={{ graphNode, setGraphNodes, addGraphNode, removeGraphNode }}
+      value={{
+        graphNode,
+        setGraphNodes,
+        addGraphNode,
+        removeGraphNode,
+        updateGraphNode,
+        clearGraphNodes,
+      }}
     >
       {children}
     </GraphNodeContext.Provider>

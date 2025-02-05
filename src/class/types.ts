@@ -11,3 +11,5 @@ export interface GraphNode {
   x?: number;
   y?: number;
 };
+
+export const NODE_LOCAL_SAVE_KEY = 'graphNodes';
